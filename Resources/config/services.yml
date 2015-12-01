@@ -1,0 +1,15 @@
+# This file is part of the CampaignChain package.
+#
+# (c) CampaignChain, Inc. <info@campaignchain.com>
+#
+# For the full copyright and license information, please view the LICENSE
+# file that was distributed with this source code.
+
+services:
+#    campaign_chain_channel_ez_platform.example:
+#        class: CampaignChain\Channel\EZPlatformBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]
+    campaignchain.channel.ezplatform.rest.client:
+        class: CampaignChain\Channel\EZPlatformBundle\REST\EZPlatformClient
+        calls:
+            - [setContainer, ["@service_container"]]

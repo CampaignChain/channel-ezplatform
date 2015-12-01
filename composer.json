@@ -1,0 +1,36 @@
+{
+    "name": "campaignchain/channel-ezplatform",
+    "description": "Connects to eZ Platform's REST API.",
+    "keywords": ["campaignchain"],
+    "type": "campaignchain-channel",
+    "license": "Apache-2.0",
+    "homepage": "http://www.campaignchain.com",
+    "authors": [
+        {
+            "name": "CampaignChain Inc.",
+            "email": "info@campaignchain.com",
+            "homepage": "http://www.campaignchain.com"
+        }
+    ],
+    "require": {
+        "guzzle/guzzle":"~3.9"
+    },
+    "autoload": {
+        "psr-4": { "CampaignChain\\Channel\\EZPlatformBundle\\": "" }
+    },
+    "extra": {
+        "campaignchain": {
+            "kernel": {
+                "classes": [
+                    "CampaignChain\\Channel\\EZPlatformBundle\\CampaignChainChannelEZPlatformBundle"
+                ],
+                "routing":
+                {
+                    "name": "campaignchain_channel_ezplatform",
+                    "resource": "@CampaignChainChannelEZPlatformBundle/Resources/config/routing.yml",
+                    "prefix": "/"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,18 @@
+
+modules:
+    campaignchain-ezplatform:
+        display_name: eZ Platform
+        description: "Connects to eZ Platform's REST API"
+        routes: 
+            new: campaignchain_channel_ezplatform_new
+        hooks:
+            default:
+        params:
+            cta_tracking: true
+            # The criteria for the /views REST API call to eZ Platform, which
+            # is supposed to return unpublished content only. Due to eZ's high
+            # flexibility, that could include content that has no eZ Location
+            # yet or is hidden or has a certain workflow state.
+            ez_unpublished_criteria:
+                # eZ\Publish\API\Repository\Values\Content\Query\Criterion\Visibility::HIDDEN = 1
+                VisibilityCriterion: 1

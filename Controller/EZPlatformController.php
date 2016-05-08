@@ -46,8 +46,8 @@ class EZPlatformController extends Controller
         $form->handleRequest($request);
         try {
             if ($form->isValid()) {
-                $repository = $this->getDoctrine()->getManager();
-                $repository->getConnection()->beginTransaction();
+                $em = $this->getDoctrine()->getManager();
+                $em->getConnection()->beginTransaction();
 
                 $locationName   = $form->getData()['location_name'];
                 $url            = $form->getData()['url'];
@@ -80,10 +80,10 @@ class EZPlatformController extends Controller
                 $user->setLocation($channel->getLocations()[0]);
                 $user->setUsername($username);
                 $user->setPassword($password);
-                $repository->persist($user);
-                $repository->flush();
+                $em->persist($user);
+                $em->flush();
 
-                $repository->getConnection()->commit();
+                $em->getConnection()->commit();
 
                 $this->addFlash(
                     'success',
@@ -93,7 +93,7 @@ class EZPlatformController extends Controller
                     'campaignchain_core_channel'));
             }
         } catch (\Exception $e) {
-            $repository->getConnection()->rollback();
+            $em->getConnection()->rollback();
             throw $e;
         }
         return $this->render(

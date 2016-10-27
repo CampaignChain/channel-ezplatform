@@ -92,7 +92,6 @@ class EZPlatformClient
         // Get the criteria for unpublished content.
         $moduleService = $this->container->get('campaignchain.core.module');
         $module = $moduleService->getModule(
-            Module::REPOSITORY_CHANNEL,
             'campaignchain/channel-ezplatform',
             'campaignchain-ezplatform'
         );

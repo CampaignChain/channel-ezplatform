@@ -97,7 +97,7 @@ class EZPlatformController extends Controller
                     'The eZ Platform <a href="'.$url.'">'.$locationName.'</a> was connected successfully.'
                 );
                 return $this->redirect($this->generateUrl(
-                    'campaignchain_core_channel'));
+                    'campaignchain_core_location'));
             }
         } catch (\Exception $e) {
             $em->getConnection()->rollback();

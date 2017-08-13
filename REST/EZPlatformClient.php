@@ -12,9 +12,8 @@ namespace CampaignChain\Channel\EZPlatformBundle\REST;
 
 use CampaignChain\CoreBundle\Entity\Activity;
 use CampaignChain\CoreBundle\Entity\Location;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Guzzle\Http\Client;
-use CampaignChain\CoreBundle\Entity\Module;
+use CampaignChain\CoreBundle\Exception\ExternalApiException;
+use GuzzleHttp\Client;
 
 class EZPlatformClient
 {
@@ -24,6 +23,9 @@ class EZPlatformClient
     protected $username;
     
     protected $password;
+
+    /** @var  Client */
+    protected $client;
     
     public function setContainer($container)
     {
@@ -50,41 +52,36 @@ class EZPlatformClient
         $this->password = $password;
 
         try {
-            $this->client = new Client($this->baseUrl);
-            $this->client->setDefaultOption('auth', array(
-                $this->username, $this->password
-            ));
-            $this->client->setDefaultOption('headers', array(
-                'Accept' => 'application/vnd.ez.api.ContentInfo+json',
-                ));
-            return $this;
-        }
-        catch (ClientErrorResponseException $e) {
-            $req = $e->getRequest();
-            $resp =$e->getResponse();
-            print_r($resp);
-        }
-        catch (ServerErrorResponseException $e) {
+            $this->client = new Client([
+                'base_uri' => self::BASE_URL,
+                'headers' => array(
+                    'Accept' => 'application/vnd.ez.api.ContentInfo+json',
+                ),
+                'auth' => array(
+                    $this->username, $this->password
+                ),
+            ]);
 
-            $req = $e->getRequest();
-            $resp =$e->getResponse();
-            print_r($resp);
+            return $this;
+        } catch (\Exception $e) {
+            throw new ExternalApiException($e->getMessage(), $e->getCode());
         }
-        catch (BadResponseException $e) {
-            $req = $e->getRequest();
-            $resp =$e->getResponse();
-            print_r($resp);
-        }
-        catch(Exception $e){
-            print_r($e->getMessage());
+    }
+
+    private function request($method, $uri, $body = array())
+    {
+        try {
+            $res = $this->client->request($method, $uri, $body);
+            return json_decode($res->getBody(), true);
+        } catch(\Exception $e){
+            throw new ExternalApiException($e->getMessage(), $e->getCode());
         }
     }
 
     public function getContentTypes()
     {
-        $request = $this->client->get('content/types');
-        $response = $request->send()->json();
-        return $response['ContentTypeInfoList']['ContentType'];
+        $res = $this->request('GET', 'content/types');
+        return $res['ContentTypeInfoList']['ContentType'];
     }
 
     public function getUnpublishedContentObjectsByContentTypeId($id)
@@ -111,16 +108,18 @@ class EZPlatformClient
             )
         );
 
-        $request = $this->client->post('views', $headers, json_encode($body));
-        $response = $request->send()->json();
+        $res = $this->request('POST','views', array(
+                'headers' => $headers,
+                'body' => json_encode($body),
+            )
+        );
 
-        return $response['View']['Result']['searchHits']['searchHit'];
+        return $res['View']['Result']['searchHits']['searchHit'];
     }
 
     public function getContentObject($id)
     {
-        $request = $this->client->get('content/objects/'.$id);
-        $response = $request->send()->json();
-        return $response['Content'];
+        $res = $this->request('GET','content/objects/'.$id);
+        return $res['Content'];
     }
 }

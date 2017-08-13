@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "guzzle/guzzle":"~3.9"
+        "guzzlehttp/guzzle": "^6.0"
     },
     "autoload": {
         "psr-4": { "CampaignChain\\Channel\\EZPlatformBundle\\": "" }
